@@ -7,3 +7,6 @@
 [submodule "eureka-server"]
 	path = eureka-server
 	url = https://github.com/InnControlUPC/eureka-server.git
+[submodule "api-gateway"]
+	path = api-gateway
+	url = https://github.com/InnControlUPC/api-gateway.git
