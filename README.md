@@ -27,6 +27,46 @@ Este repositorio actúa como raíz para el conjunto de microservicios del sistem
 
 ---
 
+---
+## 📚 Documentación 
+
+Si vas usar kafka 
+```yml
+spring:
+  application:
+    name: {tu-servicio}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: rutakids-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+```
+Debes reemplazar `{tu-servicio}` por el nombre de tu microservicio. y poner eso en tu application.yml o application.properties.
+para que el microservicio se conecte a Kafka correctamente.
+
+!OJO: Asegúrate de que el puerto `9092` esté disponible y que Kafka esté corriendo.
+
+> Uso de eureka:
+```yml
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka}
+```
+
+> Reemplaza `${EUREKA_SERVER_URL}` por la URL de tu servidor Eureka si es necesario.
+
+
 ## 🔄 Cómo clonar correctamente este repositorio
 
 > ⚠️ Este repositorio usa **submódulos**, asegúrate de clonar correctamente.
