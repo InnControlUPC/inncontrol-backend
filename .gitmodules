@@ -1,3 +1,6 @@
 [submodule "notifications-service"]
 	path = notifications-service
 	url = https://github.com/InnControlUPC/notifications-service.git
+[submodule "employee-service"]
+	path = employee-service
+	url = https://github.com/InnControlUPC/employeesms.git
