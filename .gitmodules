@@ -1,0 +1,3 @@
+[submodule "notifications-service"]
+	path = notifications-service
+	url = https://github.com/InnControlUPC/notifications-service.git
