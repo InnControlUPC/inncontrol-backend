@@ -4,3 +4,6 @@
 [submodule "employee-service"]
 	path = employee-service
 	url = https://github.com/InnControlUPC/employeesms.git
+[submodule "eureka-server"]
+	path = eureka-server
+	url = https://github.com/InnControlUPC/eureka-server.git
