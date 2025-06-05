@@ -122,9 +122,18 @@ git push
 
 ---
 
+## ✅ Pasos para Modificar un Submódulo
+
+> Si modificas un submódulo (por ejemplo, código dentro de un microservicio), recuerda:
+
+1. **Entrar al submódulo**:
+   ```bash
+   cd nombre-submodulo
+   
 ## 🧹 Buenas prácticas
 
 - Si modificas un submódulo (código dentro del microservicio), recuerda:
+  si estás en detached HEAD: git checkout main  # o la rama que uses (opcional)
   1. Hacer `commit` y `push` dentro del submódulo.
   2. Luego hacer `git add nombre-submodulo` en el repo raíz para actualizar el puntero.
   3. Finalmente `git commit` y `push` en el repo raíz.
