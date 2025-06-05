@@ -16,3 +16,6 @@
 [submodule "communications-service"]
 	path = communications-service
 	url = https://github.com/InnControlUPC/communications-service.git
+[submodule "inventory-service"]
+	path = inventory-service
+	url = https://github.com/InnControlUPC/inventory-service.git
