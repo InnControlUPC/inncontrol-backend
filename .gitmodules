@@ -13,3 +13,6 @@
 [submodule "task-service"]
 	path = task-service
 	url = https://github.com/InnControlUPC/task-service.git
+[submodule "communications-service"]
+	path = communications-service
+	url = https://github.com/InnControlUPC/communications-service.git
