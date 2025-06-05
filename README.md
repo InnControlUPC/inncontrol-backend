@@ -72,7 +72,7 @@ eureka:
 > ⚠️ Este repositorio usa **submódulos**, asegúrate de clonar correctamente.
 
 ```bash
-git clone --recurse-submodules https://github.com/InnControlUPC/microservices-root.git
+git clone --recurse-submodules https://github.com/InnControlUPC/inncontrol-backend.git
 cd microservices-root
 ```
 
