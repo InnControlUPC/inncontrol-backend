@@ -10,3 +10,6 @@
 [submodule "api-gateway"]
 	path = api-gateway
 	url = https://github.com/InnControlUPC/api-gateway.git
+[submodule "task-service"]
+	path = task-service
+	url = https://github.com/InnControlUPC/task-service.git
