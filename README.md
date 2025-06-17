@@ -1,40 +1,62 @@
-# 🧩 Microservices Root Repository
+# 🧩 InnControl Backend – Microservices Root Repository
 
-Este repositorio actúa como raíz para el conjunto de microservicios del sistema. Incluye la infraestructura compartida (como Kafka) y los microservicios principales agregados como **submódulos de Git**.
+Este repositorio actúa como punto central para el ecosistema de microservicios de **InnControl**. Aquí se encuentra la orquestación completa mediante `docker-compose`, junto con todos los servicios (algunos como submódulos) y la infraestructura común.
 
 ---
 
 ## 📁 Estructura del repositorio
 
 ```
-.
-├── kafka/                        # Infraestructura compartida (Kafka, Zookeeper, etc.)
-│   └── docker-compose.yml
-├── notifications-service/       # Microservicio: Notificaciones (submódulo)
-├── auth-service/                # Microservicio: Autenticación (submódulo)
-├── user-service/                # Microservicio: Gestión de usuarios (submódulo)
-├── docker-compose.yml           # Orquestación general de servicios
-└── README.md
+inncontrol-backend/
+├── accommodation-service/       # Microservicio: Gestión de alojamientos
+├── api-gateway/                 # API Gateway central
+├── communications-service/      # Microservicio: Comunicaciones internas (mensajería)
+├── employee-service/            # Microservicio: Gestión de empleados
+├── eureka-server/               # Eureka Server para descubrimiento de servicios
+├── inventory-service/           # Microservicio: Gestión de inventario
+├── kafka-service/               # Configuración Kafka/Zookeeper (opcional si separado)
+├── notifications-service/       # Microservicio: Notificaciones asíncronas
+├── task-service/                # Microservicio: Gestión de tareas
+├── docker-compose.yml           # Orquestación de todos los servicios
+└── README.md                    # Este archivo
 ```
 
 ---
 
 ## 🚀 Propósito
 
-- Centralizar la configuración y orquestación local de los microservicios.
-- Facilitar el onboarding del equipo técnico.
-- Permitir levantar toda la arquitectura con `docker-compose`.
+- Proveer un entorno local para desarrollo completo de la plataforma InnControl.
+- Simplificar el arranque y prueba de todos los microservicios.
+- Centralizar la configuración compartida como Eureka, Kafka y bases de datos.
 
 ---
 
----
-## 📚 Documentación 
+## 🐳 Levantar todo el ecosistema local
 
-Si vas usar kafka 
-```yml
+Asegúrate de tener **Docker** y **Docker Compose** instalados.
+
+```bash
+docker-compose up --build
+```
+
+Este comando iniciará:
+- **Zookeeper & Kafka**
+- **Eureka Server**
+- Todos los microservicios (empleados, inventario, tareas, etc.)
+- Bases de datos MySQL para cada microservicio con persistencia
+
+---
+
+## 🔗 Integraciones esenciales
+
+### Uso de Kafka en un microservicio
+
+Agrega la siguiente configuración a tu `application.yml` o `application.properties`:
+
+```yaml
 spring:
   application:
-    name: {tu-servicio}
+    name: nombre-del-servicio
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
@@ -48,13 +70,14 @@ spring:
       properties:
         spring.json.trusted.packages: "*"
 ```
-Debes reemplazar `{tu-servicio}` por el nombre de tu microservicio. y poner eso en tu application.yml o application.properties.
-para que el microservicio se conecte a Kafka correctamente.
 
-!OJO: Asegúrate de que el puerto `9092` esté disponible y que Kafka esté corriendo.
+📌 Reemplaza `nombre-del-servicio` por el identificador único de tu microservicio.
 
-> Uso de eureka:
-```yml
+---
+
+### Uso de Eureka
+
+```yaml
 eureka:
   instance:
     instance-id: ${spring.application.name}:${random.value}
@@ -63,52 +86,6 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka}
 ```
-
-> Reemplaza `${EUREKA_SERVER_URL}` por la URL de tu servidor Eureka si es necesario.
-
-
-## 🔄 Cómo clonar correctamente este repositorio
-
-> ⚠️ Este repositorio usa **submódulos**, asegúrate de clonar correctamente.
-
-```bash
-git clone --recurse-submodules https://github.com/InnControlUPC/inncontrol-backend.git
-cd microservices-root
-```
-
-Si ya lo clonaste sin el flag `--recurse-submodules`, puedes correr:
-
-```bash
-git submodule update --init --recursive
-```
-
----
-
-## 🛠️ Comandos útiles
-
-### Inicializar submódulos (si no están cargados)
-
-```bash
-git submodule update --init --recursive
-```
-
-### Actualizar submódulos a sus últimas versiones remotas
-
-```bash
-git submodule foreach git pull origin main
-```
-
----
-
-## 🐳 Levantar toda la infraestructura local
-
-Asumiendo que tienes Docker y Docker Compose instalados:
-
-```bash
-docker-compose up --build
-```
-
-Esto levantará Kafka, Zookeeper y todos los microservicios configurados en el `docker-compose.yml` raíz.
 
 ---
 
@@ -122,25 +99,52 @@ git push
 
 ---
 
-## ✅ Pasos para Modificar un Submódulo
+## 🛠️ Comandos útiles
 
-> Si modificas un submódulo (por ejemplo, código dentro de un microservicio), recuerda:
+### Clonar el repositorio con submódulos
 
-1. **Entrar al submódulo**:
+```bash
+git clone --recurse-submodules https://github.com/InnControlUPC/inncontrol-backend.git
+cd inncontrol-backend
+```
+
+Si ya lo habías clonado sin ese flag:
+
+```bash
+git submodule update --init --recursive
+```
+
+### Actualizar todos los submódulos a la última versión remota
+
+```bash
+git submodule foreach git pull origin main
+```
+
+---
+
+## ✅ Buenas prácticas con submódulos
+
+Si modificas un microservicio (submódulo):
+
+1. Entra al submódulo:
    ```bash
    cd nombre-submodulo
-   
-## 🧹 Buenas prácticas
-
-- Si modificas un submódulo (código dentro del microservicio), recuerda:
-  si estás en detached HEAD: git checkout main  # o la rama que uses (opcional)
-  1. Hacer `commit` y `push` dentro del submódulo.
-  2. Luego hacer `git add nombre-submodulo` en el repo raíz para actualizar el puntero.
-  3. Finalmente `git commit` y `push` en el repo raíz.
+   git checkout main  # o tu rama
+   ```
+2. Realiza los commits y push normalmente dentro del submódulo.
+3. Luego vuelve al repo raíz y actualiza el puntero:
+   ```bash
+   cd ..
+   git add nombre-submodulo
+   git commit -m "Update submodule pointer"
+   git push
+   ```
 
 ---
 
 ## 👥 Contacto
 
-Este repositorio es mantenido por el equipo técnico de **InnControlUPC**. Para soporte o dudas internas, contacta a tu equipo de infraestructura o DevOps.
+Este repositorio es mantenido por el equipo técnico de **InnControlUPC**.  
+Para dudas técnicas o soporte, contacta con tu responsable de DevOps o infraestructura.
 
+---
