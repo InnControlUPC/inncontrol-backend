@@ -68,7 +68,7 @@ services:
     networks:
       - inncontrol-network
 
-  # Iventory microservice
+  # Inventory microservice
   inventory-mysql:
     image: mysql:8.0
     command: --port=3310
@@ -93,11 +93,73 @@ services:
       MYSQL_INVENTORY_PORT: 3310
       MYSQL_INVENTORY_USERNAME: root
       MYSQL_INVENTORY_PASSWORD: Admin123admin
+      PORT: 0
     depends_on:
       - inventory-mysql
     networks:
       - inncontrol-network
 
+  # Employees microservice
+  employees-mysql:
+    image: mysql:8.0
+    command: --port=3311
+    environment:
+      MYSQL_ROOT_PASSWORD: Admin123admin
+      MYSQL_DATABASE: employeesms
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-P", "3311" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - inncontrol-network
+  employees-service:
+    container_name: inncontrol-employees
+    build:
+      context: employee-service
+    environment:
+      <<: *shared-env
+      MYSQL_EMPLOYEES_HOST: employees-mysql
+      MYSQL_EMPLOYEES_PORT: 3311
+      MYSQL_EMPLOYEES_USERNAME: root
+      MYSQL_EMPLOYEES_PASSWORD: Admin123admin
+      PORT: 0
+    depends_on:
+      - employees-mysql
+    networks:
+      - inncontrol-network
+
+  # Accommodation microservice
+  accommodation-mysql:
+    image: mysql:8.0
+    command: --port=3312
+    environment:
+      MYSQL_ROOT_PASSWORD: Admin123admin
+      MYSQL_DATABASE: accommodationms
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-P", "3312" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - inncontrol-network
+  accommodation-service:
+    container_name: inncontrol-accommodation
+    build:
+      context: accommodation-service
+    environment:
+      <<: *shared-env
+      MYSQL_ACCOMMODATION_HOST: accommodation-mysql
+      MYSQL_ACCOMMODATION_PORT: 3312
+      MYSQL_ACCOMMODATION_USERNAME: root
+      MYSQL_ACCOMMODATION_PASSWORD: Admin123admin
+      PORT: 0
+    depends_on:
+      - accommodation-mysql
+    networks:
+      - inncontrol-network
+
+# Network configuration
 networks:
   inncontrol-network:
     driver: bridge
