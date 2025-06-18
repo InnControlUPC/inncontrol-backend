@@ -22,3 +22,6 @@
 [submodule "inventory-service"]
 	path = inventory-service
 	url = https://github.com/InnControlUPC/inventory-service
+[submodule "iam-service"]
+	path = iam-service
+	url = https://github.com/InnControlUPC/iam-service
