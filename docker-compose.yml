@@ -71,6 +71,44 @@ services:
     networks:
       - inncontrol-network
 
+
+  # =====================================
+  # IAM Microservice + MySQL database
+  # =====================================
+  iam-mysql:
+    image: mysql:8.0
+    command: --port=3316
+    environment:
+      MYSQL_ROOT_PASSWORD: Admin123admin
+      MYSQL_DATABASE: IamServiceDB
+    volumes:
+      - iam-db-data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-P", "3316" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - inncontrol-network
+
+  iam-service:
+    container_name: inncontrol-iam
+    build:
+      context: iam-service
+    environment:
+      <<: *shared-env
+      MYSQL_IAM_HOST: iam-mysql
+      MYSQL_IAM_PORT: 3316
+      MYSQL_IAM_USERNAME: root
+      MYSQL_IAM_PASSWORD: Admin123admin
+      PORT: 0
+    depends_on:
+      iam-mysql:
+        condition: service_healthy
+    networks:
+      - inncontrol-network
+
+
   # -----------------------------------------
   # Notifications Service - Async messaging
   # -----------------------------------------
@@ -116,7 +154,8 @@ services:
       MYSQL_INVENTORY_PASSWORD: Admin123admin
       PORT: 0
     depends_on:
-      - inventory-mysql
+      inventory-mysql:
+        condition: service_healthy
     networks:
       - inncontrol-network
 
@@ -151,7 +190,8 @@ services:
       MYSQL_EMPLOYEES_PASSWORD: Admin123admin
       PORT: 0
     depends_on:
-      - employees-mysql
+      employees-mysql:
+        condition: service_healthy
     networks:
       - inncontrol-network
 
@@ -186,7 +226,8 @@ services:
       MYSQL_ACCOMMODATION_PASSWORD: Admin123admin
       PORT: 0
     depends_on:
-      - accommodation-mysql
+      accommodation-mysql:
+        condition: service_healthy
     networks:
       - inncontrol-network
 
@@ -221,7 +262,47 @@ services:
       MYSQL_TASK_PASSWORD: Admin123admin
       PORT: 0
     depends_on:
-      - task-mysql
+      task-mysql:
+        condition: service_healthy
+    networks:
+      - inncontrol-network
+
+
+  # =====================================
+  # Communications Microservice + MySQL database
+  # =====================================
+  communications-postgres:
+    image: mysql:8.0
+    restart: always
+    environment:
+      POSTGRES_DB: communications_db
+      POSTGRES_USER: communications_user
+      POSTGRES_PASSWORD: communications_password
+    ports:
+      - "5892:5432"
+    volumes:
+      - communications-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - inncontrol-network
+
+  communications-service:
+    container_name: inncontrol-communications
+    build:
+      context: communications-service
+    environment:
+      <<: *shared-env
+      POSTGRES_URL: jdbc:postgresql://communications-postgres:5432/communications_db
+      POSTGRES_USER: communications_user
+      POSTGRES_PASSWORD: communications_password
+      PORT: 0
+    depends_on:
+      communications-mysql:
+        condition: service_healthy
     networks:
       - inncontrol-network
 
@@ -240,3 +321,5 @@ volumes:
   employees-db-data:
   accommodation-db-data:
   task-db-data:
+  iam-db-data:
+  communications-db-data:
