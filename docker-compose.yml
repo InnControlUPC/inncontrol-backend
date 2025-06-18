@@ -1,4 +1,4 @@
-version: "3.9"
+
 
 # ================================
 # InnControl - Docker Compose File
@@ -272,7 +272,7 @@ services:
   # Communications Microservice + MySQL database
   # =====================================
   communications-postgres:
-    image: mysql:8.0
+    image: postgres:15
     restart: always
     environment:
       POSTGRES_DB: communications_db
@@ -301,7 +301,7 @@ services:
       POSTGRES_PASSWORD: communications_password
       PORT: 0
     depends_on:
-      communications-mysql:
+      communications-postgres:
         condition: service_healthy
     networks:
       - inncontrol-network
