@@ -25,3 +25,6 @@
 [submodule "iam-service"]
 	path = iam-service
 	url = https://github.com/InnControlUPC/iam-service
+[submodule "profile-service"]
+	path = profile-service
+	url = https://github.com/InnControlUPC/inncontrol-profile.git
