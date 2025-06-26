@@ -159,6 +159,42 @@ services:
     networks:
       - inncontrol-network
 
+  # =========================================
+  # Profile Microservice + MySQL database
+  # =========================================
+  profile-mysql:
+    image: mysql:8.0
+    command: --port=3314
+    environment:
+      MYSQL_ROOT_PASSWORD: Admin123admin
+      MYSQL_DATABASE: ProfileService
+    volumes:
+      - profile-db-data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-P", "3314" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - inncontrol-network
+
+  profile-service:
+    container_name: inncontrol-profile
+    build:
+      context: profile-service
+    environment:
+      <<: *shared-env
+      MYSQL_PROFILE_HOST: profile-mysql
+      MYSQL_PROFILE_PORT: 3314
+      MYSQL_PROFILE_USERNAME: root
+      MYSQL_PROFILE_PASSWORD: Admin123admin
+      PORT: 0
+    depends_on:
+      profile-mysql:
+        condition: service_healthy
+    networks:
+      - inncontrol-network
+
   # ========================================
   # Employees Microservice + MySQL database
   # ========================================
@@ -323,3 +359,4 @@ volumes:
   task-db-data:
   iam-db-data:
   communications-db-data:
+  profile-db-data:
